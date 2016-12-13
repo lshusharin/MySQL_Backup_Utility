@@ -1,0 +1,10 @@
+innobackupex --user=root --password=vfr800 /home/leonidshusharin/bu
+
+innobackupex --user=root --password=vfr800 --apply-log /home/leonidshusharin/bu/2016-11-24_15-42-15/
+
+innobackupex --incremental /home/leonidshusharin/bu/inc --incremental-basedir=/home/leonidshusharin/bu/2016-11-24_15-42-15 --user=root --password=vfr800
+
+innobackupex --apply-log --redo-only /home/leonidshusharin/bu/2016-11-24_15-43-15 --incremental-dir=/home/leonidshusharin/bu/inc/2016-11-24_15-46-34 --user=root --password=vfr800
+
+rm -rf /var/lib/mysql/*
+innobackupex --copy-back /home/
