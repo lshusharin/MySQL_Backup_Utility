@@ -22,12 +22,13 @@ class MYSQL_operator(object):
     last_incremental_backup = None
 
     def __init__(self, folder, s3_repo, s3_profile_name='default', user='root', passwd='vfr800',):
+
         self.backup_folder = os.path.abspath(folder)
         self.s3_repo_name = s3_repo
         self.s3_profile = s3_profile_name
         self.user = user
         self.passwd = passwd
-
+        print self.backup_folder
         pass
 
     def set_dedicated_backup(self, day=0, hour=0, minute=0, seconds=0):
@@ -94,7 +95,8 @@ class MYSQL_operator(object):
     def move_to_s3(self):
         s3 = boto3.client('s3')
         print os.path.abspath(os.path.join(self.backup_folder, str(self.bp_start_time)))
-        name = str(self.last_incremental_backup) if self.last_incremental_backup else str(self.bp_start_time)
+        # name = str(self.last_incremental_backup) if self.last_incremental_backup else str(self.bp_start_time)
+        name = os.path.abspath(os.path.join(self.backup_folder, str(self.last_incremental_backup))) if self.last_incremental_backup else os.path.abspath(os.path.join(self.backup_folder, str(self.bp_start_time)))
         shutil.make_archive(name, 'gztar', os.path.abspath(os.path.join(self.backup_folder, self.bp_start_time)))
         s3.upload_file(name+'.tar.gz', "repository-mysql-backuper", "default")
         # innobackupex --apply-log --redo-only /home/leonidshusharin/bu/2016-11-23_15-42-28/ --user=root --password=vfr800
