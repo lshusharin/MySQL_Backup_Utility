@@ -44,7 +44,7 @@ class MYSQL_operator(object):
 
         if not os.path.exists(path):
             os.makedirs(path)  # creates with default perms 0777
-            
+
 
         cmd_full_backup = "innobackupex " + str(path) + " --user=" + self.user + " --password=" + self.passwd +" --no-timestamp"
 
@@ -101,9 +101,9 @@ class MYSQL_operator(object):
         filename = str(name + ".tar.gz")
         execute = 'tar -cf ' + os.path.abspath(os.path.join(self.backup_folder, filename)) + ' ' + os.path.abspath(os.path.join(self.backup_folder, name))
         print execute
-        subprocess.Popen(execute, stdout=subprocess.PIPE, shell=True)
+        subprocess.Popen(execute, stdout=subprocess.PIPE, shell=True).wait()
 
         # shutil.make_archive(name, 'gztar', os.path.abspath(os.path.join(self.backup_folder, self.bp_start_time)))
-        s3.upload_file(os.path.abspath(os.path.join(self.backup_folder, filename)), "repository-mysql-backuper", "default")
+        s3.upload_file(os.path.join(self.backup_folder, filename), "repository-mysql-backuper", "default")
         # innobackupex --apply-log --redo-only /home/leonidshusharin/bu/2016-11-23_15-42-28/ --user=root --password=vfr800
 # innobackupex --user=DBUSER --password=DBUSERPASS /path/to/BACKUP-DIR/
