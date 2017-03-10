@@ -96,8 +96,13 @@ class MYSQL_operator(object):
         s3 = boto3.client('s3')
         print os.path.abspath(os.path.join(self.backup_folder, str(self.bp_start_time)))
         # name = str(self.last_incremental_backup) if self.last_incremental_backup else str(self.bp_start_time)
-        name = os.path.abspath(os.path.join(self.backup_folder, str(self.last_incremental_backup))) if self.last_incremental_backup else os.path.abspath(os.path.join(self.backup_folder, str(self.bp_start_time)))
-        shutil.make_archive(name, 'gztar', os.path.abspath(os.path.join(self.backup_folder, self.bp_start_time)))
-        s3.upload_file(name+'.tar.gz', "repository-mysql-backuper", "default")
+        name = str(self.last_incremental_backup) if self.last_incremental_backup else str(self.bp_start_time)
+        filename = str(name + ".tar.gz")
+        execute = 'tar' +' -pczf ' +  os.path.abspath(os.path.join(self.backup_folder, filename))
+        print execute
+        subprocess.Popen(execute, stdout=subprocess.PIPE, shell=True)
+
+        # shutil.make_archive(name, 'gztar', os.path.abspath(os.path.join(self.backup_folder, self.bp_start_time)))
+        s3.upload_file(os.path.abspath(os.path.join(self.backup_folder, filename)), "repository-mysql-backuper", "default")
         # innobackupex --apply-log --redo-only /home/leonidshusharin/bu/2016-11-23_15-42-28/ --user=root --password=vfr800
 # innobackupex --user=DBUSER --password=DBUSERPASS /path/to/BACKUP-DIR/
