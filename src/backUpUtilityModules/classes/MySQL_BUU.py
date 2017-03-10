@@ -44,6 +44,7 @@ class MYSQL_operator(object):
 
         if not os.path.exists(path):
             os.makedirs(path)  # creates with default perms 0777
+            
 
         cmd_full_backup = "innobackupex " + str(path) + " --user=" + self.user + " --password=" + self.passwd +" --no-timestamp"
 
@@ -98,7 +99,7 @@ class MYSQL_operator(object):
         # name = str(self.last_incremental_backup) if self.last_incremental_backup else str(self.bp_start_time)
         name = str(self.last_incremental_backup) if self.last_incremental_backup else str(self.bp_start_time)
         filename = str(name + ".tar.gz")
-        execute = 'tar' +' -pczf ' +  os.path.abspath(os.path.join(self.backup_folder, filename))
+        execute = 'tar -cf ' + os.path.abspath(os.path.join(self.backup_folder, filename)) + ' ' + os.path.abspath(os.path.join(self.backup_folder, name))
         print execute
         subprocess.Popen(execute, stdout=subprocess.PIPE, shell=True)
 
