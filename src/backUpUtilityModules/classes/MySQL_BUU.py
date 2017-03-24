@@ -103,10 +103,13 @@ class MYSQL_operator(object):
         execute = 'tar -cf ' + os.path.abspath(os.path.join(self.backup_folder, filename)) + ' ' + os.path.abspath(os.path.join(self.backup_folder, name))
         print execute
         subprocess.Popen(execute, stdout=subprocess.PIPE, shell=True).wait()
-
+        print "Upload to S3"
         # shutil.make_archive(name, 'gztar', os.path.abspath(os.path.join(self.backup_folder, self.bp_start_time)))
         s3.upload_file(os.path.join(self.backup_folder, filename), "repository-mysql-backuper", self.s3_folder_name+"/"+filename)
         print "Deleting the archive"
         shutil.rmtree(os.path.join(self.backup_folder, filename))
+        print "Deleting backup folder"
+        d_name = filename.split(".")[0]
+        shutil.rmtree(os.path.join(self.backup_folder, d_name))
         # innobackupex --apply-log --redo-only /home/leonidshusharin/bu/2016-11-23_15-42-28/ --user=root --password=vfr800
         # innobackupex --user=DBUSER --password=DBUSERPASS /path/to/BACKUP-DIR/
