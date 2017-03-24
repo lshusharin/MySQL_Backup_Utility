@@ -107,7 +107,7 @@ class MYSQL_operator(object):
         # shutil.make_archive(name, 'gztar', os.path.abspath(os.path.join(self.backup_folder, self.bp_start_time)))
         s3.upload_file(os.path.join(self.backup_folder, filename), "repository-mysql-backuper", self.s3_folder_name+"/"+filename)
         print "Deleting the archive"
-        shutil.rmtree(os.path.join(self.backup_folder, filename))
+        os.remove(os.path.join(self.backup_folder, filename))
         print "Deleting backup folder"
         d_name = filename.split(".")[0]
         shutil.rmtree(os.path.join(self.backup_folder, d_name))
