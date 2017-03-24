@@ -23,19 +23,20 @@ if __name__ == "__main__":
         s3_repo = config_file.get('Main', 's3_repo')
         incremental = config_file.getboolean('Main', 'incremental')
         timer = config_file.get('Main', 'timer')
+        s3_folder_name = config_file.get('Main', 's3_folder_name')
 
         if timer != "None" and incremental:
             timer = datetime.timedelta(seconds=int(timer))
 
             if first_start:
-                initia = MYSQL_operator(backup_folder, s3_repo, user=db_user, passwd=db_password)
+                initia = MYSQL_operator(backup_folder, s3_repo, user=db_user, passwd=db_password, s3_folder_name=s3_folder_name)
                 initia.mysql_full_backup()
                 initia.mysql_incremental_backup()
                 initia.move_to_s3()
 
                 last_time_up = datetime.datetime.now()
             elif datetime.datetime.now() - last_time_up > timer:
-                initia = MYSQL_operator(backup_folder, s3_repo, user=db_user, passwd=db_password)
+                initia = MYSQL_operator(backup_folder, s3_repo, user=db_user, passwd=db_password, s3_folder_name=s3_folder_name)
                 initia.mysql_full_backup()
                 initia.mysql_incremental_backup()
                 initia.move_to_s3()
@@ -44,7 +45,7 @@ if __name__ == "__main__":
             else:
                 continue
         else:
-            initia = MYSQL_operator(backup_folder, s3_repo, user=db_user, passwd=db_password)
+            initia = MYSQL_operator(backup_folder, s3_repo, user=db_user, passwd=db_password, s3_folder_name=s3_folder_name)
             initia.mysql_full_backup()
 
             initia.mysql_apply_back_up_log()

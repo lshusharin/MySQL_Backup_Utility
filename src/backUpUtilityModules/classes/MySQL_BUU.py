@@ -21,13 +21,14 @@ class MYSQL_operator(object):
     bp_start_time = None
     last_incremental_backup = None
 
-    def __init__(self, folder, s3_repo, s3_profile_name='default', user='root', passwd='vfr800',):
+    def __init__(self, folder, s3_repo, s3_profile_name='default', user='root', passwd='vfr800', s3_folder_name=None):
 
         self.backup_folder = os.path.abspath(folder)
         self.s3_repo_name = s3_repo
         self.s3_profile = s3_profile_name
         self.user = user
         self.passwd = passwd
+        self.s3_folder_name = s3_folder_name
         print self.backup_folder
         pass
 
@@ -102,10 +103,13 @@ class MYSQL_operator(object):
         execute = 'tar -cf ' + os.path.abspath(os.path.join(self.backup_folder, filename)) + ' ' + os.path.abspath(os.path.join(self.backup_folder, name))
         print execute
         subprocess.Popen(execute, stdout=subprocess.PIPE, shell=True).wait()
-
+        print "Upload to S3"
         # shutil.make_archive(name, 'gztar', os.path.abspath(os.path.join(self.backup_folder, self.bp_start_time)))
-        s3.upload_file(os.path.join(self.backup_folder, filename), "repository-mysql-backuper", filename)
+        s3.upload_file(os.path.join(self.backup_folder, filename), "repository-mysql-backuper", self.s3_folder_name+"/"+filename)
         print "Deleting the archive"
-        shutil.rmtree(os.path.join(self.backup_folder, filename))
+        os.remove(os.path.join(self.backup_folder, filename))
+        print "Deleting backup folder"
+        d_name = filename.split(".")[0]
+        shutil.rmtree(os.path.join(self.backup_folder, d_name))
         # innobackupex --apply-log --redo-only /home/leonidshusharin/bu/2016-11-23_15-42-28/ --user=root --password=vfr800
-# innobackupex --user=DBUSER --password=DBUSERPASS /path/to/BACKUP-DIR/
+        # innobackupex --user=DBUSER --password=DBUSERPASS /path/to/BACKUP-DIR/
