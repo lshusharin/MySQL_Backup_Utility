@@ -104,6 +104,6 @@ class MYSQL_operator(object):
         subprocess.Popen(execute, stdout=subprocess.PIPE, shell=True).wait()
 
         # shutil.make_archive(name, 'gztar', os.path.abspath(os.path.join(self.backup_folder, self.bp_start_time)))
-        s3.upload_file(os.path.join(self.backup_folder, filename), "repository-mysql-backuper", "default")
+        s3.upload_file(os.path.join(self.backup_folder, filename), "repository-mysql-backuper", filename)
         # innobackupex --apply-log --redo-only /home/leonidshusharin/bu/2016-11-23_15-42-28/ --user=root --password=vfr800
 # innobackupex --user=DBUSER --password=DBUSERPASS /path/to/BACKUP-DIR/
